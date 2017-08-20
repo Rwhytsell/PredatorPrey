@@ -7,11 +7,13 @@ random.seed(None)
 size = width, height = 500, 500
 play_width = width/5
 play_height = height/5
+is_stopped = False
+
+# These are the codes that pygame uses, I am not sure what format it is
 black = 0
 red = 16386570
 blue = 658170
 color_arr = [black, red, blue]
-is_stopped = False
 
 pygame.init()
 screen = pygame.display.set_mode(size)
