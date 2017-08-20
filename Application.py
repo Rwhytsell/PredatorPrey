@@ -17,26 +17,26 @@ pygame.init()
 screen = pygame.display.set_mode(size)
 
 
-def color_pixels(surface, x, y, color_int):
-    surface.set_at((x, y), color_arr[color_int])
-    surface.set_at((x + 1, y), color_arr[color_int])
-    surface.set_at((x, y + 1), color_arr[color_int])
-    surface.set_at((x + 1, y + 1), color_arr[color_int])
-    surface.set_at((x + 2, y), color_arr[color_int])
-    surface.set_at((x, y + 2), color_arr[color_int])
-    surface.set_at((x + 2, y + 2), color_arr[color_int])
-    surface.set_at((x + 2, y + 1), color_arr[color_int])
-    surface.set_at((x + 1, y + 2), color_arr[color_int])
+def paint(x, y, color_int):
+    screen.set_at((x, y), color_arr[color_int])
+    screen.set_at((x + 1, y), color_arr[color_int])
+    screen.set_at((x, y + 1), color_arr[color_int])
+    screen.set_at((x + 1, y + 1), color_arr[color_int])
+    screen.set_at((x + 2, y), color_arr[color_int])
+    screen.set_at((x, y + 2), color_arr[color_int])
+    screen.set_at((x + 2, y + 2), color_arr[color_int])
+    screen.set_at((x + 2, y + 1), color_arr[color_int])
+    screen.set_at((x + 1, y + 2), color_arr[color_int])
 
 
-def random_colors(surface, w, h):
+def random_colors(w, h):
     while not is_stopped:
         for x in range(1, w, 5):
             for y in range(1, h, 5):
                 color_int = random.randint(1, 2)
-                color_pixels(surface, x, y, color_int)
+                paint(x, y, color_int)
 
-color_thread = Thread(target=random_colors, args=(screen, width, height))
+color_thread = Thread(target=random_colors, args=(width, height))
 color_thread.start()
 
 while True:
