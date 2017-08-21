@@ -5,8 +5,16 @@ random.seed(None)
 
 class Node:
 
-    def __init__(self):
-        self.species = 0
+    species = None
+    x = None
+    y = None
+    health = None
+
+    def __init__(self, spec=None):
+        if spec is not None:
+            self.species = spec
+        else:
+            self.species = 0
         self.x = None
         self.y = None
         self.health = None
@@ -16,13 +24,13 @@ class Node:
         self.y = pos_y
 
     def set_species(self, num):
-        if num is 0 | 1 | 2:
+        if num == 0 or num == 1 or num == 2:
             self.species = num
-            if num is 0: # Blank
+            if num is 0:  # Blank
                 self.health = None
-            if num is 1: # Predator
+            if num is 1:  # Predator
                 self.health = 4
-            if num is 2: # Prey
+            if num is 2:  # Prey
                 self.health = 5
 
         else:
@@ -43,13 +51,32 @@ class Map:
     width = 100
     play_board = []
 
-    @classmethod
-    def __init__(cls):
-        for x in range(cls.width):
+    def __init__(self):
+        prey = 0
+        predator = 0
+        empty = 0
+        for x in range(self.width):
             row = []
-            for y in range(cls.height):
-                row.append(Node)
-            cls.play_board.append(row)
+            for y in range(self.height):
+                i = random.randint(0, 10)
+                if i <= 5:
+                    row.append(Node(2))
+                    prey += 1
+                elif i <= 7:
+                    row.append(Node(1))
+                    predator += 1
+                else:
+                    row.append(Node)
+                    empty += 1
+
+            self.play_board.append(row)
+        print('Map created')
+        print('Prey: ', prey)
+        print('Predator: ', predator)
+        print('Empty: ', empty)
+
+    def get_board(self):
+        return self.play_board
 
     # This is the main logic for the Predator-Prey simulation
     def turn(self):
@@ -100,14 +127,19 @@ class Map:
             # Check for overpopulation/health
             neighbors = self.get_neighbors(x, y)
             prey = []
-            open = []
+            open_spots = []
             for neigh in neighbors:
                 if neigh.species == 2:
                     prey.append(neigh)
                 if neigh.species == 0:
-                    open.append(neigh)
+                    open_spots.append(neigh)
             count = len(prey)
             if count == 0 or count >= 6:
                 node.health -= 1
-            if node.health > 2 and len(open) >= 1:
-                open[random.randint(0, len(open))].prey_reproduce()
+                return
+            if node.health is None:
+                node.species = 0
+                return
+            if node.health > 2 and len(open_spots) >= 1:
+                open_spots[random.randint(0, len(open_spots))].prey_reproduce()
+                return
