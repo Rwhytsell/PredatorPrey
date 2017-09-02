@@ -21,6 +21,7 @@ screen = pygame.display.set_mode(size)
 pp = PredatorPrey.Map()
 
 
+# Paints a 3x3 square
 def paint(x, y, color_int):
     screen.set_at((x, y), color_arr[color_int])
     screen.set_at((x + 1, y), color_arr[color_int])
@@ -35,17 +36,7 @@ def paint(x, y, color_int):
 
 # TODO numpy matrix's
 def map_to_pixel(pp_map):
-    pixel_map = [[0 for x in range(100)] for y in range(100)]
-    for x in range(1, 100, 1):
-        for y in range(1, 100, 1):
-            print('X: ', x, end='')
-            print(' Y: ', y)
-            if pp_map[x][y].species == 0:
-                pixel_map[x][y] = 0
-            elif pp_map[x][y].species == 1:
-                pixel_map[x][y] = 1
-            else:
-                pixel_map[x][y] = 2
+    pixel_map = [[y.species for y in x] for x in pp_map]
     return pixel_map
 
 
