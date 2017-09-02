@@ -34,7 +34,7 @@ def paint(x, y, color_int):
     screen.set_at((x + 1, y + 2), color_arr[color_int])
 
 
-# TODO numpy matrix's
+
 def map_to_pixel(pp_map):
     pixel_map = [[y.species for y in x] for x in pp_map]
     return pixel_map

@@ -17,7 +17,7 @@ class Node:
             self.species = 0
         self.x = None
         self.y = None
-        self.health = self.species
+        self.health = self.species*2
 
     def set_location(self, pos_x, pos_y):
         self.x = pos_x
@@ -29,17 +29,19 @@ class Node:
             if num is 0:  # Blank
                 self.health = None
             if num is 1:  # Predator
-                self.health = 4
+                self.health = 2
             if num is 2:  # Prey
-                self.health = 5
+                self.health = 10
 
         else:
             sys.stderr.write('Species not correct, do not do math with them.')
             self.species = 0
 
-    def prey_eaten(self):
-        self.species = 2
-        self.health = 4
+    def prey_eat(self):
+        self.health -= 1
+        if self.health <= 0:
+            self.species = 1
+            self.health = 2
 
     def prey_reproduce(self):
         self.species = 1
@@ -110,7 +112,7 @@ class Map:
             for neigh in neighbors:
                 if neigh.species == 2:
                     prey += 1
-            if prey >= 4:
+            if prey >= 2:
                 node.set_species(2)
 
         if node.species is 1:
@@ -121,10 +123,11 @@ class Map:
                 if neigh.species == 2:
                     prey.append(neigh)
             if len(prey) == 0:
-                node.health -= 1
+                node.health -= 2
             else:
-                prey[random.randint(0, (len(prey)-1))].prey_eaten()
-            if node.health == 0:
+                prey[random.randint(0, (len(prey)-1))].prey_eat()
+                node.health -= 3
+            if node.health <= 0:
                 node.species = 0
 
         if node.species is 2:
