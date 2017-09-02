@@ -44,8 +44,8 @@ def random_colors(w, h):
     ra = random.randint
     pa = paint
     while not is_stopped:
-        for x in range(1, w, 5):
-            for y in range(1, h, 5):
+        for x in range(5, w, 5):
+            for y in range(5, h, 5):
                 color_int = ra(1, 2)
                 pa(x, y, color_int)
 
@@ -54,9 +54,9 @@ def paint_map(board):
     map_arr = map_to_pixel(board)
     pa = paint
     length = len(map_arr)
-    for x in range(length):
-        for y in range(x):
-            pa(x, y, map_arr[x][y])
+    for x in range(0, length):
+        for y in range(0, length):
+            pa(x*5, y*5, map_arr[x][y])
 
 while True:
     for event in pygame.event.get():
@@ -65,4 +65,5 @@ while True:
             sys.exit(0)
     paint_map(pp.get_board())
     pygame.display.flip()
-    random_colors(width, height)
+    pp.turn()
+
