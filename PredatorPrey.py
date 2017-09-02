@@ -66,7 +66,7 @@ class Map:
                     row.append(Node(1))
                     predator += 1
                 else:
-                    row.append(Node)
+                    row.append(Node(0))
                     empty += 1
 
             self.play_board.append(row)
