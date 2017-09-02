@@ -74,18 +74,20 @@ class Map:
         print('Prey: ', prey)
         print('Predator: ', predator)
         print('Empty: ', empty)
+        print('Width: ', len(self.play_board))
+        print('Height of row 5: ', len(self.play_board[5]))
 
     def get_board(self):
         return self.play_board
 
-    # This is the main logic for the Predator-Prey simulation
+    # TODO find an alternative to nested for loops
     def turn(self):
         pb = self.play_board
         for x in range(0, self.width, 1):
             for y in range(0, self.height, 1):
                 self.check_neighbors(x, y, pb[x][y])
 
-    # TODO Check to see if node is on any edge of the board and wrap
+    # Returns the neighbors of a node, If node is on edge this wraps
     def get_neighbors(self, x, y):
         top = self.play_board[x][(y - 1) % self.height]
         tr = self.play_board[(x + 1) % self.width][(y - 1) % self.height]
@@ -121,7 +123,7 @@ class Map:
             if len(prey) == 0:
                 node.health -= 1
             else:
-                prey[random.randint(0, len(prey))].prey_eaten()
+                prey[random.randint(0, (len(prey)-1))].prey_eaten()
             if node.health == 0:
                 node.species = 0
 
@@ -143,5 +145,5 @@ class Map:
                 node.species = 0
                 return
             if node.health > 2 and len(open_spots) >= 1:
-                open_spots[random.randint(0, len(open_spots))].prey_reproduce()
+                open_spots[random.randint(0, (len(open_spots))-1)].prey_reproduce()
                 return
