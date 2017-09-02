@@ -85,19 +85,21 @@ class Map:
             for y in range(0, self.height, 1):
                 self.check_neighbors(x, y, pb[x][y])
 
-    # TODO Check to see if node is on the edge of the board and wrap
+    # TODO Check to see if node is on any edge of the board and wrap
     def get_neighbors(self, x, y):
-        top = self.play_board[x][y - 1]
-        tr = self.play_board[x + 1][y - 1]
-        right = self.play_board[x + 1][y]
-        br = self.play_board[x + 1][y + 1]
-        bottom = self.play_board[x][y + 1]
-        bl = self.play_board[x - 1][y - 1]
-        left = self.play_board[x - 1][y]
-        tl = self.play_board[x - 1][y - 1]
+        top = self.play_board[x][(y - 1) % self.height]
+        tr = self.play_board[(x + 1) % self.width][(y - 1) % self.height]
+        right = self.play_board[(x + 1) % self.width][y]
+        br = self.play_board[(x + 1) % self.width][(y + 1) % self.height]
+        bottom = self.play_board[x][(y + 1) % self.height]
+        bl = self.play_board[(x - 1) % self.width][(y + 1) % self.height]
+        left = self.play_board[(x - 1) % self.width][y]
+        tl = self.play_board[(x - 1) % self.width][(y - 1) % self.height]
+
         neighbors = [top, tr, right, br, bottom, bl, left, tl]
         return neighbors
 
+    # TODO get accurate Rules and implement
     def check_neighbors(self, x, y, node):
         if node.species is 0:
             # Check for prey for reproduction
