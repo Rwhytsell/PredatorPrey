@@ -17,7 +17,7 @@ class Node:
             self.species = 0
         self.x = None
         self.y = None
-        self.health = None
+        self.health = self.species
 
     def set_location(self, pos_x, pos_y):
         self.x = pos_x
