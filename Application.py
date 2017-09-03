@@ -34,12 +34,6 @@ def paint(x, y, color_int):
     screen.set_at((x + 1, y + 2), color_arr[color_int])
 
 
-
-def map_to_pixel(pp_map):
-    pixel_map = [[y.species for y in x] for x in pp_map]
-    return pixel_map
-
-
 def random_colors(w, h):
     ra = random.randint
     pa = paint
@@ -51,12 +45,11 @@ def random_colors(w, h):
 
 
 def paint_map(board):
-    map_arr = map_to_pixel(board)
     pa = paint
-    length = len(map_arr)
+    length = len(board)
     for x in range(0, length):
         for y in range(0, length):
-            pa(x*5, y*5, map_arr[x][y])
+            pa(x*5, y*5, board[x][y].species)
 
 while True:
     for event in pygame.event.get():
