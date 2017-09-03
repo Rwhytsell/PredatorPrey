@@ -31,20 +31,19 @@ class Node:
             if num is 1:  # Predator
                 self.health = 2
             if num is 2:  # Prey
-                self.health = 10
-
+                self.health = 3
         else:
             sys.stderr.write('Species not correct, do not do math with them.')
             self.species = 0
 
     def prey_eat(self):
-        self.health -= 1
+        self.health -= 2
         if self.health <= 0:
             self.species = 1
             self.health = 2
 
     def prey_reproduce(self):
-        self.species = 1
+        self.species = 2
         self.health = 5
 
 
@@ -113,7 +112,7 @@ class Map:
                 if neigh.species == 2:
                     prey += 1
             if prey >= 2:
-                node.set_species(2)
+                node.prey_reproduce()
 
         if node.species is 1:
             # Check for prey if no prey reduce health/die
@@ -126,12 +125,12 @@ class Map:
                 node.health -= 2
             else:
                 prey[random.randint(0, (len(prey)-1))].prey_eat()
-                node.health -= 3
             if node.health <= 0:
                 node.species = 0
+            node.health -= 2
 
         if node.species is 2:
-            # Check for overpopulation/health
+            # Check for overpopulation/health This is prey
             neighbors = self.get_neighbors(x, y)
             prey = []
             open_spots = []
@@ -142,11 +141,12 @@ class Map:
                     open_spots.append(neigh)
             count = len(prey)
             if count == 0 or count >= 6:
-                node.health -= 1
+                node.health -= 2
                 return
-            if node.health is None:
+            if node.health is None or node.health is 0:
                 node.species = 0
                 return
             if node.health > 2 and len(open_spots) >= 1:
                 open_spots[random.randint(0, (len(open_spots))-1)].prey_reproduce()
                 return
+            node.health += 1
