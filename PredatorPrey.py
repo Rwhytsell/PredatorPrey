@@ -84,9 +84,7 @@ class Map:
     # TODO find an alternative to nested for loops
     def turn(self):
         pb = self.play_board
-        for x in range(0, self.width, 1):
-            for y in range(0, self.height, 1):
-                self.check_neighbors(x, y, pb[x][y])
+        [[self.check_neighbors(x, y, pb[x][y]) for y in range(0, self.height, 1)] for x in range(0, self.width)]
 
     # Returns the neighbors of a node, If node is on edge this wraps
     def get_neighbors(self, x, y):
