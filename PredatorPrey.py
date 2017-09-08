@@ -1,5 +1,6 @@
 import random
 import sys
+import copy
 random.seed(None)
 
 
@@ -31,20 +32,30 @@ class Node:
             if num is 1:  # Predator
                 self.health = 2
             if num is 2:  # Prey
-                self.health = 3
+                self.health = 4
+        else:
+            sys.stderr.write('Species not correct, do not do math with them.')
+            self.species = 0
+
+    def move_here(self, species, health):
+        if species == 0 or species == 1 or species == 2:
+            self.species = species
+            if species is 0:  # Blank
+                self.health = health
+            if species is 1:  # Predator
+                self.health = health
+            if species is 2:  # Prey
+                self.health = health
         else:
             sys.stderr.write('Species not correct, do not do math with them.')
             self.species = 0
 
     def prey_eat(self):
-        self.health -= 2
-        if self.health <= 0:
             self.species = 1
-            self.health = 2
 
     def prey_reproduce(self):
         self.species = 2
-        self.health = 5
+        self.health = 1
 
 
 class Map:
@@ -60,10 +71,10 @@ class Map:
             row = []
             for y in range(self.height):
                 i = random.randint(0, 10)
-                if i <= 5:
+                if i <= 7:
                     row.append(Node(2))
                     prey += 1
-                elif i <= 7:
+                elif i <= 9:
                     row.append(Node(1))
                     predator += 1
                 else:
@@ -81,10 +92,9 @@ class Map:
     def get_board(self):
         return self.play_board
 
-    # TODO find an alternative to nested for loops
     def turn(self):
         pb = self.play_board
-        [[self.check_neighbors(x, y, pb[x][y]) for y in range(0, self.height, 1)] for x in range(0, self.width)]
+        [[self.check_neighbors(x, y, pb[x][y]) for y in range(0, self.height)] for x in range(0, self.width)]
 
     # Returns the neighbors of a node, If node is on edge this wraps
     def get_neighbors(self, x, y):
@@ -100,51 +110,75 @@ class Map:
         neighbors = [top, tr, right, br, bottom, bl, left, tl]
         return neighbors
 
-    # TODO get accurate Rules and implement
+    #
+    # PREDATOR AND PREY CELLULAR AUTOMATON
+    # The world is grid of cells, with 3 possibilities: Predator(Red, 1), Prey(Green, 2), or Empty(Black, 0).
+    # Both predator and prey have a set health, that changes over time.
+    # The simulation works in steps, with the following rules:
+    #    -For prey:
+    #        -Tries to move in a random direction.
+    #        -Health increases.
+    #        -When health reaches a threshold:
+    #           -They will reproduce, creating a new "Prey"
+    #            -Their health resets to 1
+    #    -For predator:
+    #        -Tries to move in a random direction.
+    #        -Health decreases.
+    #        -When health reaches 0, they die and turn into "Nothing".
+    #       -If the adjacent square is a prey:
+    #            -They will eat it, turning it into a "predator" (reproducing)
+    #            -Their health will increase by the amount of health the eaten prey had
     def check_neighbors(self, x, y, node):
+        # If the node is empty no checks are performed
         if node.species is 0:
-            # Check for prey for reproduction
-            prey = 0
-            neighbors = self.get_neighbors(x, y)
-            for neigh in neighbors:
-                if neigh.species == 2:
-                    prey += 1
-            if prey >= 2:
-                node.prey_reproduce()
+            return
 
         if node.species is 1:
-            # Check for prey if no prey reduce health/die
+            # This is a predator. Check for prey if no prey reduce health/die
             neighbors = self.get_neighbors(x, y)
             prey = []
+            open_ = []
+
             for neigh in neighbors:
-                if neigh.species == 2:
+                if neigh.species is 2:
                     prey.append(neigh)
-            if len(prey) == 0:
-                node.health -= 2
-            else:
-                prey[random.randint(0, (len(prey)-1))].prey_eat()
-            if node.health <= 0:
+                if neigh.species is 0:
+                    open_.append(neigh)
+            open_length = len(open_)
+
+            if node.health is None or node.health <= 0:
                 node.species = 0
-            node.health -= 2
+                return
+
+            if len(prey) is 0:
+                if node.health > 0 and open_length > 0:
+                    node.health -= 1
+                    open_[random.randint(0, (open_length-1))].move_here(1, node.health)
+                    node.set_species(0)
+                    return
+
+
+
+            else:
+                target = prey[random.randint(0, (len(prey)-1))]
+                if node.health > target.health:
+                    target.prey_eat()
 
         if node.species is 2:
             # Check for overpopulation/health This is prey
             neighbors = self.get_neighbors(x, y)
-            prey = []
             open_spots = []
             for neigh in neighbors:
-                if neigh.species == 2:
-                    prey.append(neigh)
-                if neigh.species == 0:
+                if neigh.species is 0:
                     open_spots.append(neigh)
-            count = len(prey)
-            if count == 0 or count >= 6:
+            count = len(open_spots)
+            if count >= 7 or count < 1:
                 node.health -= 2
-                return
             if node.health is None or node.health is 0:
                 node.species = 0
                 return
-            if node.health > 2 and len(open_spots) >= 1:
+            if node.health > 6 and len(open_spots) >= 1:
                 open_spots[random.randint(0, (len(open_spots))-1)].prey_reproduce()
+                node.health = 1
                 return
             node.health += 1
