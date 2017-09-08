@@ -146,10 +146,6 @@ class Map:
                     open_.append(neigh)
             open_length = len(open_)
 
-            if node.health is None or node.health <= 0:
-                node.species = 0
-                return
-
             if len(prey) is 0:
                 if node.health > 0 and open_length > 0:
                     node.health -= 1
@@ -157,12 +153,14 @@ class Map:
                     node.set_species(0)
                     return
 
-
-
             else:
                 target = prey[random.randint(0, (len(prey)-1))]
-                if node.health > target.health:
+                if node.health >= target.health:
                     target.prey_eat()
+
+            if node.health is None or node.health <= 0:
+                node.species = 0
+                return
 
         if node.species is 2:
             # Check for overpopulation/health This is prey
@@ -179,6 +177,6 @@ class Map:
                 return
             if node.health > 6 and len(open_spots) >= 1:
                 open_spots[random.randint(0, (len(open_spots))-1)].prey_reproduce()
-                node.health = 1
+                node.health = 4
                 return
             node.health += 1
